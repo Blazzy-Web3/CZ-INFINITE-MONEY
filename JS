@@ -1,0 +1,58 @@
+// Select the canvas element and get the 2D rendering context
+const canvas = document.getElementById('matrix');
+const ctx = canvas.getContext('2d');
+
+// Set canvas size to window size
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// Characters to display (can be random ASCII, Katakana, etc.)
+const matrixChars = 'アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+// Calculate how many "columns" fit across the screen
+const fontSize = 16;
+const columns = Math.floor(canvas.width / fontSize);
+
+// Create an array to store the y-coordinate for each column
+const drops = [];
+for (let x = 0; x < columns; x++) {
+  drops[x] = 1;
+}
+
+// Draw the Matrix-like effect
+function drawMatrix() {
+  // Black background with slight opacity for the "trailing" effect
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Set the text color to bright green
+  ctx.fillStyle = '#0F0';
+  ctx.font = fontSize + 'px monospace';
+
+  // Loop over drops
+  for (let i = 0; i < drops.length; i++) {
+    // Choose a random character from matrixChars
+    const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+
+    // x coordinate of the text is i * fontSize
+    // y coordinate is drops[i] * fontSize
+    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+    // Send the drop back to the top randomly after it has crossed the screen
+    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[i] = 0;
+    }
+
+    // Increment y coordinate
+    drops[i]++;
+  }
+}
+
+// Continuously redraw the canvas
+setInterval(drawMatrix, 35);
+
+// Resize the canvas if the window size changes
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
